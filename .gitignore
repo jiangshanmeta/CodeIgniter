@@ -2,6 +2,7 @@
 
 application/cache/*
 application/controllers/*
+!application/cache/Common.php
 !application/cache/index.html
 !application/cache/.htaccess
 

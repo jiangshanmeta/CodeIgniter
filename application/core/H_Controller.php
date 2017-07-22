@@ -21,6 +21,8 @@ if (! defined('__DEFINED_WHERE_TYPE__')) {
 
 class H_Controller extends CI_Controller{
     private $viewType = VIEW_TYPE_HTML;
+    public $controller_name;
+    public $method_name;
 	public function __construct(){
 		parent::__construct();
 		$this->controller_name = $this->uri->rsegments[1];
@@ -49,29 +51,30 @@ class H_Controller extends CI_Controller{
     }
 
     function show_error($msg='数据有误',$status=-1){
+        $this->output->output_headers();
         switch ($this->viewType) {
-            case VIEW_TYPE_HTML:
-                $this->topTyp = "gobacktop";
-                $this->top_title = $msg;
-                ob_start();
-                $buffer = $this->template->load('default_page', 'common/404','',TRUE);
-                @ob_end_clean();
-                echo $buffer;
-                break;
+            // case VIEW_TYPE_HTML:
+            //     $this->topTyp = "gobacktop";
+            //     $this->top_title = $msg;
+            //     ob_start();
+            //     $buffer = $this->template->load('default_page', 'common/404','',TRUE);
+            //     @ob_end_clean();
+            //     echo $buffer;
+            //     break;
             case VIEW_TYPE_JSON:
                 $jsonRst = $status;
                 $jsonData = array();
                 $jsonData['err']['msg'] = $msg;
                 echo $this->exportData($jsonData,$jsonRst);  
                 break;
-            case VIEW_TYPE_PAGE:
-                $this->topTyp = "gobacktop";
-                $this->top_title = $msg;
-                ob_start();
-                $buffer = $this->template->load('default_overlay', 'common/404','',TRUE);
-                @ob_end_clean();
-                echo $buffer;
-                break;
+            // case VIEW_TYPE_PAGE:
+            //     $this->topTyp = "gobacktop";
+            //     $this->top_title = $msg;
+            //     ob_start();
+            //     $buffer = $this->template->load('default_overlay', 'common/404','',TRUE);
+            //     @ob_end_clean();
+            //     echo $buffer;
+            //     break;
             default:
                 # code...
                 break;
