@@ -398,6 +398,18 @@ class CI_Output {
 
 	// --------------------------------------------------------------------
 
+
+	public function output_headers(){
+		if (count($this->headers) > 0)
+		{
+			foreach ($this->headers as $header)
+			{
+				@header($header[0], $header[1]);
+			}
+		}
+	}
+
+
 	/**
 	 * Display Output
 	 *
@@ -470,13 +482,8 @@ class CI_Output {
 		// --------------------------------------------------------------------
 
 		// Are there any server headers to send?
-		if (count($this->headers) > 0)
-		{
-			foreach ($this->headers as $header)
-			{
-				@header($header[0], $header[1]);
-			}
-		}
+		$this->output_headers();
+
 
 		// --------------------------------------------------------------------
 
@@ -543,17 +550,11 @@ class CI_Output {
 	}
 
 	// --------------------------------------------------------------------
-
-	/**
-	 * Write Cache
-	 *
-	 * @param	string	$output	Output data to cache
-	 * @return	void
-	 */
-	public function _write_cache($output)
-	{
-		$CI =& get_instance();
-		$path = $CI->config->item('cache_path');
+	protected function _get_cache_path(){
+		$CFG =& load_class('Config', 'core');
+		$URI =& load_class('URI', 'core', $CFG);
+		
+		$path = $CFG->item('cache_path');
 		$cache_path = ($path === '') ? APPPATH.'cache'.DIRECTORY_SEPARATOR : rtrim($path, '/\\').DIRECTORY_SEPARATOR;
 
 		if ( ! is_dir($cache_path) OR ! is_really_writable($cache_path))
@@ -562,11 +563,11 @@ class CI_Output {
 			return;
 		}
 
-		$uri = $CI->config->item('base_url')
-			.$CI->config->item('index_page')
-			.$CI->uri->uri_string();
+		$uri = $CFG->item('base_url')
+			.$CFG->item('index_page')
+			.$URI->uri_string();
 
-		if (($cache_query_string = $CI->config->item('cache_query_string')) && ! empty($_SERVER['QUERY_STRING']))
+		if (($cache_query_string = $CFG->item('cache_query_string')) && ! empty($_SERVER['QUERY_STRING']))
 		{
 			if (is_array($cache_query_string))
 			{
@@ -579,6 +580,24 @@ class CI_Output {
 		}
 
 		$cache_path .= md5($uri);
+		return $cache_path;
+	}
+	/**
+	 * Write Cache
+	 *
+	 * @param	string	$output	Output data to cache
+	 * @return	void
+	 */
+	public function _write_cache($output)
+	{
+		// $CI =& get_instance();
+
+		$cache_path = $this->_get_cache_path();
+		if(!$cache_path){
+			return;
+		}
+
+
 
 		if ( ! $fp = @fopen($cache_path, 'w+b'))
 		{
@@ -655,24 +674,7 @@ class CI_Output {
 	 */
 	public function _display_cache(&$CFG, &$URI)
 	{
-		$cache_path = ($CFG->item('cache_path') === '') ? APPPATH.'cache/' : $CFG->item('cache_path');
-
-		// Build the file path. The file name is an MD5 hash of the full URI
-		$uri = $CFG->item('base_url').$CFG->item('index_page').$URI->uri_string;
-
-		if (($cache_query_string = $CFG->item('cache_query_string')) && ! empty($_SERVER['QUERY_STRING']))
-		{
-			if (is_array($cache_query_string))
-			{
-				$uri .= '?'.http_build_query(array_intersect_key($_GET, array_flip($cache_query_string)));
-			}
-			else
-			{
-				$uri .= '?'.$_SERVER['QUERY_STRING'];
-			}
-		}
-
-		$filepath = $cache_path.md5($uri);
+		$filepath = $this->_get_cache_path();
 
 		if ( ! file_exists($filepath) OR ! $fp = @fopen($filepath, 'rb'))
 		{
@@ -731,37 +733,11 @@ class CI_Output {
 	 */
 	public function delete_cache($uri = '')
 	{
-		$CI =& get_instance();
-		$cache_path = $CI->config->item('cache_path');
-		if ($cache_path === '')
-		{
-			$cache_path = APPPATH.'cache/';
-		}
 
-		if ( ! is_dir($cache_path))
-		{
-			log_message('error', 'Unable to find cache path: '.$cache_path);
+		$cache_path = $this->_get_cache_path();
+		if(!$cache_path){
 			return FALSE;
 		}
-
-		if (empty($uri))
-		{
-			$uri = $CI->uri->uri_string();
-
-			if (($cache_query_string = $CI->config->item('cache_query_string')) && ! empty($_SERVER['QUERY_STRING']))
-			{
-				if (is_array($cache_query_string))
-				{
-					$uri .= '?'.http_build_query(array_intersect_key($_GET, array_flip($cache_query_string)));
-				}
-				else
-				{
-					$uri .= '?'.$_SERVER['QUERY_STRING'];
-				}
-			}
-		}
-
-		$cache_path .= md5($CI->config->item('base_url').$CI->config->item('index_page').ltrim($uri, '/'));
 
 		if ( ! @unlink($cache_path))
 		{
