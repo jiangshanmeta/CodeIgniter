@@ -6,6 +6,9 @@ class User_model extends Record_model{
 
         $this->field_list['_id'] = $this->load->field('Field_mongoid','uid','otherContactor');
         $this->field_list['name'] = $this->load->field('Field_string',"姓名","name",true);
+
+        $this->field_list['pwd'] = $this->load->field('Field_string',"pwd","pwd");
+
         $this->field_list['typ'] = $this->load->field('Field_enum',"身份","typ",false,__CLASS__);
 
         $this->field_list['typ']->set_enum(array(
@@ -21,7 +24,7 @@ class User_model extends Record_model{
             999=>'总部管理',
             
         ));
-        
+
         $this->field_list['tags'] = $this->load->field('Field_tag',"擅长","tags",false,__CLASS__);
         $this->field_list['tags']->set_enum(array(0=>"不限",1=>"德系",2=>"标雪、DS"));
 
@@ -35,12 +38,27 @@ class User_model extends Record_model{
             201=>'投资人',202=>'销售',203=>'开奖通知',204=>'代付权限',205=>'人事',
             206=>'工资计算',
             301=>'电销',302=>'投诉分析'
-
-
-
         ));
-
-
     }
+
+    public function verify_login($phone,$pwd){
+        $this->init_with_where(['phone'=>$phone]);
+        if(!$this->is_inited){
+            $this->setLastError('用户名不存在');
+            return false;
+        }
+        // var_dump($this->data);
+        if($this->_encode_pwd($pwd) != $this->data['pwd']  ){
+            $this->setLastError('密码有误');
+            return false;
+        }
+        return true;
+    }
+
+    private function _encode_pwd($pwd){
+        return strtolower(md5($pwd));
+    }
+
+
 }
 ?>

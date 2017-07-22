@@ -23,8 +23,8 @@ class Welcome extends Common {
 		$this->load->model('records/User_model',"userInfo");
 		$this->userInfo->init_with_id('551b8d46511dee7e100041a8');
 		// $this->userInfo->init_with_where(['name'=>'郭佳']);
-		var_dump($this->userInfo->is_inited);
-		var_dump($this->userInfo->field_list);
+		// var_dump($this->userInfo->is_inited);
+		// var_dump($this->userInfo->field_list);
 		// $this->output->cache(10);
 		// var_dump($this->db);
 		$this->load->view('welcome_message');

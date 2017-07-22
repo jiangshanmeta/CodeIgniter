@@ -10,12 +10,13 @@ class Login{
 	protected $cookieName = 'userInfo';
 	protected $loginExpire = 31536000;
 	protected $cookieRefresh = 86400;
-	protected $uid;
+	public $mode = 'token';
+	public $uid;
 	protected $onlineId;
 	protected $CI;
-	public function __get($key){
-		return $this->$key;
-	}
+	// public function __get($key){
+	// 	return $this->$key;
+	// }
 
 	public function __construct(){
 		$this->CI = &get_instance();
@@ -30,11 +31,19 @@ class Login{
 			}
 		}
 	}
-	// 对外接口
-	// doLogin 登录
-	// doLogout 登出
-	// isLogin 是否登录
-	public function isLogin(){
+
+	protected function _isLoginByHttp(){
+		$token = $this->CI->input->server('HTTP_TOKEN');
+		$this->onlineId = $token;
+		$data = $this->getOnlineInfo();
+		if(!is_array($data)){
+			return false;
+		}
+		$this->uid = $data['uid'];
+		return true;
+	}
+
+	protected function _isLoginByCookie(){
 		$cookie = $this->CI->input->cookie($this->cookieName);
 		// 检查cookie是否存在
 		if(!$cookie){
@@ -67,17 +76,46 @@ class Login{
 		return true;
 	}
 
+	public function isLogin(){
+		switch ($this->mode){
+			case 'token':
+				return $this->_isLoginByHttp();
+			case 'cookie':
+				return $this->_isLoginByCookie();
+			default :
+				return false;
+		}
+	}
+
 	// 登录，数据库插入一条记录，设置cookie
 	public function doLogin($uid){
 		$this->uid = $uid;
 		$this->onlineId = $this->insertOnlineInfo($uid);
+
+		switch($this->mode){
+			case 'token':
+				$this->_tokenLogin();
+			case 'cookie':
+				$this->_cookieLogin();
+		}
+		return $this->onlineId;
+
+	}
+
+	protected function _tokenLogin(){
+		header('Token:'.$this->onlineId);
+	}
+
+	protected function _cookieLogin(){
 		$cookie = $this->encodeCookie($this->uid,$this->onlineId);
 		set_cookie($this->cookieName,$cookie,$this->loginExpire);
 	}
 
-	// 登出，删cookie
+	// 登出
 	public function doLogout(){
-		delete_cookie($this->cookieName);
+		if($this->isLogin()){
+			$this->deleteOnlineInfo();
+		}
 	}
 
 	// 内部函数
@@ -103,6 +141,10 @@ class Login{
 	protected function updateOnlineInfo(array $data){
 		unset($data['_id'],$data['uid']);
 		$this->CI->db->where(['_id'=>new MongoId($this->onlineId)])->update($this->tableName,$data);
+	}
+
+	protected function deleteOnlineInfo(){
+		$this->CI->db->where(['_id'=>new MongoId($this->onlineId)])->delete($this->tableName);
 	}
 
 	protected function getOnlineInfo(){
