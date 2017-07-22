@@ -700,7 +700,7 @@ class CI_Output {
 		$last_modified = filemtime($filepath);
 
 		// Has the file expired?
-		if ($_SERVER['REQUEST_TIME'] >= $expire && is_really_writable($cache_path))
+		if ($_SERVER['REQUEST_TIME'] >= $expire && is_really_writable($filepath))
 		{
 			// If so we'll delete it.
 			@unlink($filepath);
