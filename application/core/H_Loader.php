@@ -23,10 +23,8 @@ class H_Loader extends CI_Loader{
 			$class = substr($class, $last_slash);
 		}
 		$class = ucfirst($class);
-		// var_dump($class,$path);
 		if(!class_exists($class,FALSE)){
 			foreach ($this->_ci_field_paths as $field_path) {
-				// var_dump($field_path);
 				if(!file_exists($field_path.'models/fields/'.$path.$class.'.php')){
 					continue;
 				}
@@ -35,6 +33,7 @@ class H_Loader extends CI_Loader{
 					throw new RuntimeException($field_path."models/".$path.$class.".php exists, but doesn't declare class ".$class);
 				}
 			}
+
 			if(!class_exists($class,FALSE)){
 				throw new RuntimeException("Unable to locate the model you have specified: ".$class);
 			}

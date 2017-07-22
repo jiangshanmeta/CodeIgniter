@@ -8,15 +8,15 @@ class Record_Model extends H_Model{
 	public $data = [];
 	public $tableName;
 	private $lastError = ['msg'=>'','id'=>'','errno'=>-1];
-	function __construct(){
+	function __construct($tbName){
 		parent::__construct();
-
+		$this->tableName = $tbName;
 		// 一个model只对应一张表，实例之间tableName一定是相同的，因而用静态+引用
 		// 这里tableName要先声明，然后赋一个引用，否则回报错
 		// library里面用&get_instance引CI也会出现同样的问题，切记
 		// 未来可能加上 各种查看、查改、删除等的链接
-		$subclassName = $this->get_submodel_name();
-		$this->tableName = & $subclassName::$tbName;
+		// $subclassName = $this->get_submodel_name();
+		// $this->tableName = & $subclassName::$tbName;
 	}
 
 	// 这个方法只是个工具方法，和实例无关，所以改为静态方法
