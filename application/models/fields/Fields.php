@@ -6,16 +6,18 @@ class Fields{
 	// 公有在前，私有在后
 	static protected $_cache_enum = [];
 	static protected $_cache_model = [];
+	static protected $_cache_model_candidate = [];
 
 	public $tips;
 	public $value;
 	public $default;
 	public $typ;
+	public $placeholder;
 
 	protected $show_name;
 	protected $name;
 	protected $is_must_input;
-	protected $editor_class;
+	protected $editor_typ;
 
 	public function __construct($show_name,$name,$is_must_input=FALSE){
 		$this->show_name = $show_name;
@@ -39,30 +41,25 @@ class Fields{
 		return $this->value;
 	}
 	public function gen_vm_value(){
-		return $this->gen_show_value();
+		return $this->value;
 	}
 
 	public function gen_editor($typ){
 
 	}
-	final public function build_input_name($typ){
-		switch ($typ) {
-			case 0:
-				$input_name = 'create_'.$this->name;
-				break;
-			case 1:
-				$input_name = 'modify_'.$this->name;
-				break;
-			case 2:
-				$input_name = 'search_'.$this->name;
-			default:
-				$input_name = $this->name;
-				break;
+
+	public function gen_editor_info($mode='value'){
+		$data = [];
+		$data['editor'] = $this->editor_typ;
+		$data['placeholder'] = $this->placeholder;
+		$data['value'] = $this->$mode;
+		$data['field'] = $this->name;
+		$data['label'] = $this->show_name;
+		if(method_exists($this, 'gen_candidate')){
+			$data['candidate'] = $this->gen_candidate();
 		}
-		return $input_name;
+		return $data;
 	}
-	final public function set_editor_class($class_name){
-		$this->editor_class = $class_name;
-	}
+
 }
 ?>

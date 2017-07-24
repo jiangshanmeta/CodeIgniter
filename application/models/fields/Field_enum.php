@@ -12,9 +12,10 @@ class Field_enum extends Field_int{
 			$this->set_enum_key($table_name.'_'.$name);			
 		}
 		$this->typ = 'Field_enum';
+		$this->editor_typ = 'field_enum';
 	}
 
-	public function gen_enum_config(){
+	public function gen_candidate(){
 		$data = [];
 		foreach ($this->enum as $key => $value) {
 			$data[] = [
@@ -58,26 +59,7 @@ class Field_enum extends Field_int{
 		$this->set_default($this->can_select[0]);
 	}
 
-	public function gen_editor($typ){
-		switch ($typ) {
-			case 0:
-				$value = $this->gen_value($this->default);
-				break;
-			case 1:
-				$value = $this->value;
-				break;
-			default:
-				$value = $this->gen_value($this->default);
-				break;
-		}
-		$input_name = $this->build_input_name($typ);
-		$string = "<select class=\"$this->editor_class\" value=\"$value\" name=\"$input_name\"  id=\"$input_name\"    >";
-		foreach ($this->enum as $key => $this_enum) {
-			$string .= "<option ".($key==$value?'selected':'')." value=\"$key\" >$this_enum</option>";
-		}
-		$string .= "</select>";
-		return $string;
-	}
+
 
 
 }

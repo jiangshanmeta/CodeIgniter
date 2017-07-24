@@ -12,9 +12,10 @@ class Field_tag extends Field_array{
 			$this->set_enum_key($table_name.'_'.$name);
 		}
 		$this->typ = 'Field_tag';
+		$this->editor_typ = 'field_tag';
 	}
 
-	public function gen_enum_config(){
+	public function gen_candidate(){
 		$data = [];
 		foreach ($this->enum as $key => $value) {
 			$data[] = [

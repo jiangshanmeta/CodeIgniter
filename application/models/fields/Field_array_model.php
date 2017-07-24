@@ -4,12 +4,13 @@ class Field_array_model extends Field_array_mongoid{
 	public $real_value = [];
 	protected $_model_name;
 	protected $_show_field;
-	protected $_enum = array();
+	protected $enum = array();
 	function __construct($show_name,$name,$is_must_input=FALSE,$model_name=''){
 		parent::__construct($show_name,$name,$is_must_input);
 		if($model_name!==''){
 			$this->set_model_name($model_name);
 		}
+		$this->editor_typ = 'field_array_model';
 	}
 
 	final public function set_model_name($model_name){
@@ -44,11 +45,12 @@ class Field_array_model extends Field_array_mongoid{
 		return implode(",",$rst);
 	}
 
+	// TODO
 	public function set_enum(){
 
 	}
 	
-    public function gen_enum_config(){
+    public function gen_candidate(){
         $data = [];
         foreach ($this->enum as $key => $value) {
             $data[] = [

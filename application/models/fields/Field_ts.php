@@ -4,6 +4,7 @@ class Field_ts extends Fields{
 	public function __construct($show_name,$name,$is_must_input=FALSE){
 		parent::__construct($show_name,$name,$is_must_input);
 		$this->typ = 'Field_ts';
+		$this->editor_typ = 'field_ts';
 	}
 	public function gen_value($input){
 		if(is_string($input) && !is_numeric($input)){
@@ -16,6 +17,10 @@ class Field_ts extends Fields{
 			return "-";
 		}
 		return date('Y-m-d H:i',$this->value);
+	}
+
+	public function gen_vm_value(){
+		return $this->gen_show_value();
 	}
 }
 ?>
