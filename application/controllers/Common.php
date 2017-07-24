@@ -60,6 +60,33 @@ class Common extends H_Controller{
         }
         exit();
     }
+
+    protected function _common_list($listInfo='listInfo'){
+        $this->$listInfo->limit = $this->$listInfo->pagesize;
+
+        $page = is_null($this->input->get('page'))?1:$this->input->get('page');
+        $page = (int)$page;
+        $this->$listInfo->skip = ($page-1)*$this->$listInfo->pagesize;
+
+        $this->$listInfo->load_data_with_where();
+
+        $rst = [];
+        $rst['data'] = $this->$listInfo->gen_vm_array($this->$listInfo->fields);
+        if($page==1){
+            $rst['fields'] = $this->$listInfo->gen_table_title();
+            $rst['pagesize'] = $this->$listInfo->pagesize;
+            // $rst['filter'] = $this->$listInfo->gen_filter_info();
+        }
+        $rst['total'] = $this->$listInfo->count_data_with_where();
+        $rst['__page'] = $page;
+        $rst['__get'] = $_GET;
+
+        $this->output->output_headers();
+        echo $this->exportData($rst,1);
+    }
+
+
+
     function create(){
 
     }

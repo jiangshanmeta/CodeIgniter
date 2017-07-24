@@ -8,10 +8,13 @@ class List_Model extends H_Model{
 	public $dataModel;
 	public $tableName;
 	public $limit = 2000;
+	public $pagesize = 20;
 	public $skip = 0;
 	public $orderBy = ['_id'=>'desc'];
 	public $whereData = [];
 	public $will_init_record = true;
+	public $fields = [];
+	public $filters = [];
 	public function __construct(){
 		parent::__construct();
 	}
@@ -176,6 +179,42 @@ class List_Model extends H_Model{
     		return array_keys($this->record_list);
     	}
     }
+
+    public function gen_table_title(){
+    	$rst = [];
+    	foreach ($this->fields as $field) {
+    		$rst[] = [
+    			'label'=>$this->dataModel->field_list[$field]->gen_show_name(),
+    			'field'=>$field,
+    		];
+    	}
+    	return $rst;
+    }
+
+    // public function gen_table_data(){
+    // 	return $this->gen_vm_array($this)
+    // 	$rst = [];
+    // 	foreach ($this->record_list as $this_record) {
+    // 		$rst[] = $this_record->gen_vm_data($this->fields);
+    // 	}
+    // 	return $rst;
+    // }
+
+    // public function gen_filter_info(){
+    // 	$rst = [];
+    // 	foreach ($this->filters as $key => $value) {
+    // 		$item = [];
+    // 		$field_name = is_int($key)?$value:$key;
+
+    // 		$base_editor = $this->dataModel->field_list[$field_name]->gen_editor_info();
+
+    // 		if(is_string($key)){
+    // 			$base_editor = 
+    // 		}
+    // 	}
+
+    // 	return $rst;
+    // }
 
 	
 }

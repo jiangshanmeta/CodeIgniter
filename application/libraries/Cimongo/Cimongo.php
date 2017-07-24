@@ -43,6 +43,11 @@ class Cimongo extends Cimongo_extras {
          * Fake close function so you can bind $this->db=$this->cimongo
          *
          */
+        public function clear(){
+                $this->_clear();
+        }
+
+
         public function close() {
                 
         }
@@ -476,6 +481,14 @@ class Cimongo extends Cimongo_extras {
         public function limit($limit = FALSE) {
                 if ($limit && is_numeric($limit)) {
                         $this->limit = $limit;
+                }
+                return $this;
+        }
+
+
+        public function skip($skip = FALSE) {
+                if ($skip && is_numeric($skip)) {
+                        $this->offset = $skip;
                 }
                 return $this;
         }

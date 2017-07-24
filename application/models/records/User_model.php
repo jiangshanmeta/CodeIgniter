@@ -6,7 +6,7 @@ class User_model extends Record_model{
 
         $this->field_list['_id'] = $this->load->field('Field_mongoid','uid','otherContactor');
         $this->field_list['name'] = $this->load->field('Field_string',"姓名","name",true);
-
+        $this->field_list['phone'] = $this->load->field('Field_string',"电话","phone",true);
         $this->field_list['pwd'] = $this->load->field('Field_string',"pwd","pwd");
 
         $this->field_list['typ'] = $this->load->field('Field_enum',"身份","typ",false,__CLASS__);

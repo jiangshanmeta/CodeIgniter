@@ -37,5 +37,20 @@ class Index extends Common{
         echo $this->exportData([],1);
     }
 
+    function getMenuByUserPrivilege(){
+        $this->login_verify(true);
+        $this->load->library('Menu','menu');
+        $menu = $this->menu->getMenuByPrivilege($this->userInfo->field_list['privilege']->value);
+
+        echo $this->exportData(['menu'=>$menu],1);
+    }
+
+    function userList(){
+        $this->load->model('List_model','listInfo');
+        $this->listInfo->init('User_model');
+        $this->listInfo->fields = ['name','phone'];
+        $this->_common_list();
+    }
+
 }
 ?>

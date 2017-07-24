@@ -32,6 +32,8 @@ class H_Controller extends CI_Controller{
         if(is_ajax_request()){
             $this->setViewType(VIEW_TYPE_JSON);
         }
+
+        self::Register();
 	}
 
     final public function setViewType($viewType){
@@ -51,10 +53,24 @@ class H_Controller extends CI_Controller{
     }
 
 
+    public static function Register() {
+        if (function_exists('__autoload')) {
+            spl_autoload_register('__autoload');
+        }
+        return spl_autoload_register(array('H_Controller', 'LoadRecords'));
+    }
 
+    public static function LoadRecords($pClassName){
+        if ((class_exists($pClassName,FALSE)) || (strpos($pClassName, '_model')===false)) {
+            return FALSE;
+        }
 
-
-
+        $pClassFilePath = APPPATH .'models/records/'.ucfirst($pClassName) .'.php';
+        if ((file_exists($pClassFilePath) === FALSE) || (is_readable($pClassFilePath) === FALSE)) {
+            return FALSE;
+        }
+        require($pClassFilePath);
+    }
 
 }
 
