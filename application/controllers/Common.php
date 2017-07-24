@@ -63,10 +63,22 @@ class Common extends H_Controller{
 
     protected function _common_list($listInfo='listInfo'){
         $this->$listInfo->limit = $this->$listInfo->pagesize;
-
         $page = is_null($this->input->get('page'))?1:$this->input->get('page');
         $page = (int)$page;
         $this->$listInfo->skip = ($page-1)*$this->$listInfo->pagesize;
+
+        $sort = $this->input->get('sort');
+        if(!is_null($sort)){
+            $ascOrDesc = substr($sort,0,1);
+            if($ascOrDesc==='a'){
+                $sortKey = 'asc';
+            }else{
+                $sortKey = 'desc';
+            }
+            $sortField = substr($sort,1);
+            $this->$listInfo->orderBy = [$sortField=>$sortKey];
+        }
+
 
         $this->$listInfo->load_data_with_where();
 
@@ -78,10 +90,9 @@ class Common extends H_Controller{
             // $rst['filter'] = $this->$listInfo->gen_filter_info();
         }
         $rst['total'] = $this->$listInfo->count_data_with_where();
-        $rst['__page'] = $page;
-        $rst['__get'] = $_GET;
+        // $rst['sort'] = 
 
-        $this->output->output_headers();
+        // $this->output->output_headers();
         echo $this->exportData($rst,1);
     }
 
