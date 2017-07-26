@@ -4,6 +4,7 @@ class Field_model extends Field_mongoid{
 	public $real_value;
 	protected $_model_name;
 	protected $_show_field;
+	protected $whereData = [];
 	protected $enum = array();
 	public function __construct($show_name,$name,$is_must_input=FALSE,$model_name=''){
 		parent::__construct($show_name,$name,$is_must_input);
@@ -46,7 +47,7 @@ class Field_model extends Field_mongoid{
 	}
 
 	public function set_enum(){
-
+		
 	}
 	
     public function gen_candidate(){
