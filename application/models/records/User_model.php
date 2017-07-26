@@ -7,7 +7,7 @@ class User_model extends Record_model{
         $this->field_list['_id'] = $this->load->field('Field_mongoid','uid','otherContactor');
         $this->field_list['name'] = $this->load->field('Field_string',"姓名","name",true);
         $this->field_list['phone'] = $this->load->field('Field_string',"电话","phone",true);
-        $this->field_list['pwd'] = $this->load->field('Field_string',"pwd","pwd");
+        $this->field_list['pwd'] = $this->load->field('Field_pwd',"pwd","pwd",true);
 
         $this->field_list['typ'] = $this->load->field('Field_enum',"身份","typ",false,__CLASS__);
 
@@ -39,6 +39,8 @@ class User_model extends Record_model{
             206=>'工资计算',
             301=>'电销',302=>'投诉分析'
         ));
+
+        $this->field_list['quitTS'] = $this->load->field('Field_ts',"注册时间","quitTS");
     }
 
     public function verify_login($phone,$pwd){
@@ -47,16 +49,32 @@ class User_model extends Record_model{
             $this->setLastError('用户名不存在');
             return false;
         }
-        // var_dump($this->data);
-        if($this->_encode_pwd($pwd) != $this->data['pwd']  ){
+
+        if($this->field_list['pwd']->gen_value($pwd) !== $this->field_list['pwd']->real_value ){
             $this->setLastError('密码有误');
-            return false;
+            return;
         }
+
         return true;
     }
 
-    private function _encode_pwd($pwd){
-        return strtolower(md5($pwd));
+    function buildCreateShowFields(){
+        return [
+            ['name','phone'],
+            ['pwd','typ'],
+            ['tags'],
+            ['quitTS']
+
+        ];
+    }
+
+    function buildEditShowFields(){
+        return [
+            ['name','phone'],
+            ['pwd','typ'],
+            ['tags','quitTS'],
+            ['privilege'],
+        ];  
     }
 
 

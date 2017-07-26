@@ -26,6 +26,14 @@ class Field_tag extends Field_array{
 		return $data;
 	}
 
+	public function gen_show_value(){
+		$rstArr = [];
+		foreach ($this->value as $key) {
+			$rstArr[] = $this->enum[$key];
+		}
+		return implode(",", $rstArr);
+	}
+
 	
 	public function set_enum($enum){
 		if($this->_enum_key){

@@ -13,10 +13,11 @@ class Fields{
 	public $default;
 	public $typ;
 	public $placeholder;
-
+	public $is_must_input;
+	
 	protected $show_name;
 	protected $name;
-	protected $is_must_input;
+	
 	protected $editor_typ;
 
 	public function __construct($show_name,$name,$is_must_input=FALSE){
@@ -51,7 +52,10 @@ class Fields{
 	public function gen_editor_info($mode='value'){
 		$data = [];
 		$data['editor'] = $this->editor_typ;
-		$data['placeholder'] = $this->placeholder;
+		if(isset($this->placeholder)){
+			$data['placeholder'] = $this->placeholder;
+		}
+		
 		$data['value'] = $this->$mode;
 		$data['field'] = $this->name;
 		$data['label'] = $this->show_name;

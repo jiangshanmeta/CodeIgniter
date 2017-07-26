@@ -46,11 +46,29 @@ class Index extends Common{
     }
 
     function userList(){
+        $this->login_verify(true);
+
+        $this->filters = [
+            'enum_typ'=>[
+                'default'=>'all',
+            ],
+            'ts_quitTS'=>[
+                'mode'=>'from',
+                // 'field'=>
+                // 'editor'=>'filter_day'
+                'default'=>'-2 month',
+            ],
+
+        ];
+
         $this->load->model('List_model','listInfo');
         $this->listInfo->init('User_model');
-        $this->listInfo->fields = ['name','phone'];
+        $this->listInfo->fields = ['name','phone','typ','tags','privilege','quitTS'];
+        $this->_limitEnum('typ');
+        $this->_limitTS('quitTS');
         $this->_common_list();
     }
+
 
 }
 ?>

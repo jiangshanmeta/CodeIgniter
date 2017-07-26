@@ -19,7 +19,8 @@ class Field_pwd extends Field_string{
 	}
 
 	public function init($value){
-		$this->value = (string)$value;
+		$this->value = '';
+		$this->real_value = (string)$value;
 	}
 	public function set_default($default){
 		$this->default = (string)$default;

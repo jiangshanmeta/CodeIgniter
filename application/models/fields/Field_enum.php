@@ -1,6 +1,6 @@
 <?
-require_once('Field_int.php');
-class Field_enum extends Field_int{
+require_once('Fields.php');
+class Field_enum extends Fields{
 	public $enum;
 	public $enum_reverse;
 	public $can_select;	
@@ -28,6 +28,7 @@ class Field_enum extends Field_int{
 
 	public function gen_value($input){
 		$input = parent::gen_value($input);
+		$input = (int)$input;
 		if(!in_array($input, $this->can_select)){
 			$input = $this->can_select[0];
 		}

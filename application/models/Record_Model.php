@@ -7,16 +7,15 @@ class Record_Model extends H_Model{
 	public $field_list = [];
 	public $data = [];
 	public $tableName;
+	public $create_link = '/common/create/';
+	public $detail_link = '/common/info';
+	public $edit_link = '/common/edit';
+
 	private $lastError = ['msg'=>'','id'=>'','errno'=>-1];
-	function __construct($tbName){
+	function __construct($tableName){
 		parent::__construct();
-		$this->tableName = $tbName;
-		// 一个model只对应一张表，实例之间tableName一定是相同的，因而用静态+引用
-		// 这里tableName要先声明，然后赋一个引用，否则回报错
-		// library里面用&get_instance引CI也会出现同样的问题，切记
-		// 未来可能加上 各种查看、查改、删除等的链接
-		// $subclassName = $this->get_submodel_name();
-		// $this->tableName = & $subclassName::$tbName;
+		$this->tableName = $tableName;
+
 	}
 
 	// 这个方法只是个工具方法，和实例无关，所以改为静态方法
@@ -256,6 +255,16 @@ class Record_Model extends H_Model{
 		return $rst;
 	}
 
+	function gen_show_data(array $arr){
+		$rst = [];
+		foreach ($arr as $key) {
+			$rst[$key] = $this->field_list[$key]->gen_show_value();
+		}
+
+		$rst['_id'] = $this->id;
+		return $rst;
+	}
+
 	final function setLastError($msg='',$errno=-1,$id=''){
 		$this->lastError['msg'] = $msg;
 		$this->lastError['errno'] = $errno;
@@ -263,6 +272,18 @@ class Record_Model extends H_Model{
 	}
 	final function getLastError(){
 		return $this->lastError;
+	}
+
+	public function loadConfig(){
+		return $this->config->model(get_class($this));
+	}
+
+	public function buildCreateShowFields(){
+		return [];
+	}
+
+	public function buildEditShowFields(){
+		return [];
 	}
 
 
